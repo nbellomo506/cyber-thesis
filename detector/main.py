@@ -1,5 +1,7 @@
-import random_forest
+import registers
 
 def main():
-    # Load dataset
-    print("Loading dataset...")
+    registers.scan_registry_keys()
+    
+if __name__ == "__main__":
+    main()
