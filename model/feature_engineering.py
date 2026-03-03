@@ -2,9 +2,9 @@ import pandas as pd
 import math
 import csv
 
-print("--- ESTRAZIONE FEATURE AVANZATA (V5 - L'Arsenale Completo) ---")
+print("--- ESTRAZIONE FEATURE ---")
 
-file_input = "../datasets/dataset_base_pulito.csv" 
+file_input = "../datasets/dataset_base.csv" 
 file_output = "../datasets/dataset_features.csv"
 
 print(f"Caricamento del file pulito {file_input} in corso...")
@@ -28,7 +28,7 @@ def get_longest_word(text):
     words = text.split()
     return max(len(w) for w in words) if words else 0
 
-print("Calcolo delle 22 feature in corso. Le nuove CPU stanno lavorando...")
+print("Calcolo delle feature in corso...")
 
 # --- Feature Strutturali Base ---
 df['length'] = df['command'].apply(len)

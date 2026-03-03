@@ -6,20 +6,20 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
 import pickle
 
 k_folds = 5
-n_estimators = 300
-max_depth = 25
+n_estimators = 500
+max_depth = 30
 random_state = 42
 
 print("--- ADDESTRAMENTO MOTORE EDR (V4 - Con API di Sistema) ---")
 
 # 1. Caricamento Dataset
-file_input = "../datasets/dataset_features_v5.csv"
+file_input = "../datasets/dataset_features_v2.csv"
 print(f"Caricamento dataset: {file_input}")
 
 try:
     df = pd.read_csv(file_input, sep=';', decimal=',')
 except FileNotFoundError:
-    print(f"Errore: File {file_input} non trovato. Hai lanciato l'estrazione V4?")
+    print(f"Errore: File {file_input} non trovato.")
     exit()
 
 # 2. Separazione Feature (X) e Target (y)
@@ -58,6 +58,20 @@ print(f"ACCURATEZZA MEDIA: {media_accuracy:.2f}% (+/- {std_accuracy:.2f}%)")
 print(f"PRECISION MEDIA:   {media_precision:.2f}%")
 print(f"RECALL MEDIA:      {media_recall:.2f}%")
 print("====================================================")
+# ... (dopo il punto 5 dei tuoi risultati) ...
+
+# 5b. Matrice di Confusione Globale (Opzionale ma consigliata)
+from sklearn.model_selection import cross_val_predict
+y_pred = cross_val_predict(rf_model, X, y, cv=skf)
+conf_matrix = confusion_matrix(y, y_pred)
+
+print("\n--- MATRICE DI CONFUSIONE (Totale CV) ---")
+print(f"Veri Negativi (Benigni corretti): {conf_matrix[0][0]}")
+print(f"Falsi Positivi (Allarmi finti):   {conf_matrix[0][1]}  <-- Da minimizzare!")
+print(f"Falsi Negativi (Malware persi):   {conf_matrix[1][0]}  <-- Pericoloso!")
+print(f"Veri Positivi (Malware corretti): {conf_matrix[1][1]}")
+
+# ... (Punto 7: Feature Importance) ...
 
 # 6. Addestramento finale su TUTTI i dati per il salvataggio
 print("\nAddestramento del modello finale sul 100% dei dati...")
