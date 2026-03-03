@@ -7,7 +7,7 @@ import time
 print("--- AVVIO GRID SEARCH PER OTTIMIZZAZIONE EDR ---")
 
 # 1. Caricamento Dataset
-file_input = "../datasets/dataset_features_v2.csv"
+file_input = "../datasets/dataset_features_v3.csv"
 try:
     # Usiamo lo stesso formato del tuo script precedente
     df = pd.read_csv(file_input, sep=';', decimal=',')

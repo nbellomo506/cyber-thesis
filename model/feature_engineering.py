@@ -1,13 +1,13 @@
 import pandas as pd
 import math
 import csv
+import re
 
-print("--- ESTRAZIONE FEATURE ---")
+print("--- ESTRAZIONE FEATURE AVANZATA V3 ---")
 
 file_input = "../datasets/dataset_base.csv" 
 file_output = "../datasets/dataset_features.csv"
 
-print(f"Caricamento del file pulito {file_input} in corso...")
 try:
     df = pd.read_csv(file_input, sep=';')
 except Exception as e:
@@ -16,63 +16,65 @@ except Exception as e:
 
 df['command'] = df['command'].astype(str)
 df['malicious'] = df['malicious'].astype(int)
+low_cmd = df['command'].str.lower()
 
-# === FUNZIONI MATEMATICHE ===
+# === FUNZIONI DI SUPPORTO ===
 def calculate_entropy(text):
-    if not text: return 0
+    if not text or len(text) == 0: return 0
     probs = [text.count(c) / len(text) for c in set(text)]
     return -sum(p * math.log(p, 2) for p in probs)
 
 def get_longest_word(text):
-    if not text: return 0
-    words = text.split()
+    words = re.findall(r'\w+', text)
     return max(len(w) for w in words) if words else 0
 
 print("Calcolo delle feature in corso...")
 
-# --- Feature Strutturali Base ---
+# --- 1. FEATURE STRUTTURALI ---
 df['length'] = df['command'].apply(len)
 df['entropy'] = df['command'].apply(calculate_entropy)
 df['special_chars_ratio'] = df['command'].apply(lambda x: sum(1 for c in x if not c.isalnum() and not c.isspace()) / len(x) if len(x)>0 else 0)
+df['upper_case_ratio'] = df['command'].apply(lambda x: sum(1 for c in x if c.isupper()) / len(x) if len(x)>0 else 0)
+df['num_digits'] = df['command'].apply(lambda x: sum(c.isdigit() for c in x))
 df['longest_word'] = df['command'].apply(get_longest_word)
 
-# --- Feature Strutturali Avanzate (I contatori) ---
+# --- 2. CONTATORI SINTATTICI (SEGNI DI OFFUSCAMENTO) ---
 df['num_semicolons'] = df['command'].apply(lambda x: x.count(';'))
 df['num_pipes'] = df['command'].apply(lambda x: x.count('|'))
 df['num_backticks'] = df['command'].apply(lambda x: x.count('`'))
-df['num_plus'] = df['command'].apply(lambda x: x.count('+'))
+df['num_plus'] = df['command'].apply(lambda x: x.count('+')) 
 df['num_dollars'] = df['command'].apply(lambda x: x.count('$'))
-# NUOVE STRUTTURALI
 df['num_brackets'] = df['command'].apply(lambda x: sum(x.count(c) for c in ['[', ']', '{', '}']))
 df['num_quotes'] = df['command'].apply(lambda x: x.count("'") + x.count('"'))
+df['num_parenthesis'] = df['command'].apply(lambda x: x.count('(') + x.count(')'))
+df['num_commas'] = df['command'].apply(lambda x: x.count(','))
 
-# --- Feature Comportamentali (Parole chiave e flag) ---
-df['has_encoded'] = df['command'].str.lower().apply(lambda x: 1 if any(k in x for k in ['-enc', 'base64']) else 0)
-df['has_web_request'] = df['command'].str.lower().apply(lambda x: 1 if any(k in x for k in ['http', 'download', 'net.webclient', 'iwr']) else 0)
-df['has_hidden_window'] = df['command'].str.lower().apply(lambda x: 1 if any(k in x for k in ['hidden', '-w h', '-windowstyle h']) else 0)
-df['has_bypass'] = df['command'].str.lower().apply(lambda x: 1 if any(k in x for k in ['bypass', '-ep bypass', 'unrestricted']) else 0)
-# NUOVE COMPORTAMENTALI
-df['has_noprofile'] = df['command'].str.lower().apply(lambda x: 1 if any(k in x for k in ['-nop', '-noprofile']) else 0)
-df['has_iex'] = df['command'].str.lower().apply(lambda x: 1 if any(k in x for k in ['iex', 'invoke-expression']) else 0)
+# --- 3. FEATURE COMPORTAMENTALI & DLL ---
+# Offuscamento, Esecuzione e Bypass
+df['has_encoded'] = low_cmd.apply(lambda x: 1 if any(k in x for k in ['-enc', 'base64', 'encodedcommand']) else 0)
+df['has_iex'] = low_cmd.apply(lambda x: 1 if any(k in x for k in ['iex', 'invoke-expression', 'i`ex', 'i''ex']) else 0)
+df['has_bypass'] = low_cmd.apply(lambda x: 1 if any(k in x for k in ['bypass', '-ep', 'unrestricted']) else 0)
 
-# --- Feature Evasive (Compressione e Type Casting) ---
-# NUOVE EVASIVE
-df['has_compression'] = df['command'].str.lower().apply(lambda x: 1 if any(k in x for k in ['deflatestream', 'gzipstream', 'compression']) else 0)
-df['has_char_byte'] = df['command'].str.lower().apply(lambda x: 1 if any(k in x for k in ['[char]', '[byte[]]', '[convert]']) else 0)
+# Networking e Download
+df['has_web_request'] = low_cmd.apply(lambda x: 1 if any(k in x for k in ['http', 'download', 'webclient', 'iwr', 'curl', 'wget']) else 0)
 
-# --- Feature API di Sistema (Process Injection) ---
-df['has_system_dll'] = df['command'].str.lower().apply(lambda x: 1 if any(k in x for k in ['kernel32', 'ntdll', 'user32', 'advapi32']) else 0)
-df['has_dll_import'] = df['command'].str.lower().apply(lambda x: 1 if any(k in x for k in ['dllimport', 'loadlibrary', 'getprocaddress']) else 0)
-df['has_injection_api'] = df['command'].str.lower().apply(lambda x: 1 if any(k in x for k in ['virtualalloc', 'writeprocessmemory', 'createremotethread']) else 0)
+# DLL e API di Sistema (Il tuo punto focale)
+df['has_dll_ext'] = low_cmd.apply(lambda x: 1 if '.dll' in x else 0)
+df['has_api_calls'] = low_cmd.apply(lambda x: 1 if any(k in x for k in ['kernel32', 'virtualalloc', 'writeprocessmemory', 'ntdll', 'user32', 'advapi32', 'loadlibrary']) else 0)
+df['has_add_type'] = low_cmd.apply(lambda x: 1 if 'add-type' in x else 0)
+df['has_rundll32'] = low_cmd.apply(lambda x: 1 if 'rundll32' in x else 0)
+
+# Credenziali e Persistenza
+df['has_creds_theft'] = low_cmd.apply(lambda x: 1 if any(k in x for k in ['mimikatz', 'sekurlsa', 'logonpasswords', 'lsadump', 'samdump']) else 0)
+df['has_persistence'] = low_cmd.apply(lambda x: 1 if any(k in x for k in ['schtasks', 'scheduledtask', 'set-itemproperty', 'new-service']) else 0)
+
+# --- 4. NUOVA: FEATURE DI AGGREGAZIONE (DANGER SCORE) ---
+# Questa feature aiuta l'albero a capire la "densità" di sospetti
+danger_cols = [col for col in df.columns if col.startswith('has_')]
+df['danger_density'] = df[danger_cols].sum(axis=1)
 
 # === SALVATAGGIO ===
-print("Salvataggio del dataset con le nuove feature...")
-df.to_csv(
-    file_output, 
-    index=False, 
-    sep=';', 
-    decimal=',', 
-    quoting=csv.QUOTE_ALL
-)
+print(f"Salvataggio del dataset con {len(df.columns)} colonne...")
+df.to_csv(file_output, index=False, sep=';', decimal=',', quoting=csv.QUOTE_ALL)
 
-print(f"\nFINITO! Il super-dataset è salvato come: {file_output}")
+print(f"\nFINITO! Dataset pronto: {file_output}")
