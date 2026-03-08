@@ -36,7 +36,7 @@ X_final = hstack([X_numeric.values, X_tfidf])
 param_grid = {
     'max_depth': [22, 25, 27, 30],      # Salti più ampi, coprono bene l'area 20-30
     'n_estimators': [100, 300],         # Oltre 300 alberi si spreca solo potenza di calcolo
-    'min_samples_split': [2, 5],        # Quanti campioni per dividere un nodo
+    'min_samples_split': [2, 3, 4, 5],        # Quanti campioni per dividere un nodo
     'min_samples_leaf': [1, 2],         # Foglie più "pesanti" evitano l'overfitting
     'max_features': ['sqrt'],           # Molto superiore a 'log2' sulle matrici testuali
     'class_weight': ['balanced']        # Veloce ma implacabile sui malware rari

