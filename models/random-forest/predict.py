@@ -8,7 +8,7 @@ from features_engine import extract_features_dict, FEATURE_COLUMNS
 # ====================================================================
 # CONFIGURAZIONI GLOBALI DELL'EDR
 # ====================================================================
-EDR_THRESHOLD = 70.0  # Soglia per il blocco (70%)
+EDR_THRESHOLD = 50.0  # Soglia per il blocco (50%)
 
 # WHITELIST CRITTOGRAFICA: Inserisci qui l'hash SHA-256 esatto degli script approvati.
 TRUSTED_HASHES = [

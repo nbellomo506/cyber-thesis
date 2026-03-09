@@ -7,7 +7,7 @@ from sklearn.model_selection import StratifiedKFold, cross_validate
 # --- CONFIGURAZIONE ---
 file_input = "../datasets/dataset_features.xlsx" 
 n_estimators = 100 
-max_depth = 25
+max_depth = 27
 k_folds = 3
 
 print("--- TRAINING EDR (100% COMPORTAMENTALE / STATISTICO) ---")
