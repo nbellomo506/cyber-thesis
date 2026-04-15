@@ -1,0 +1,19 @@
+# Python bytecode (Cache)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ambienti virtuali
+venv/
+env/
+
+# Modelli serializzati pesanti (opzionale, se non vuoi caricarli su GitHub)
+# *.pkl
+
+# File di sistema
+.DS_Store
+Thumbs.db
+
+# File di configurazione IDE
+.vscode/
+.idea/
