@@ -3,7 +3,7 @@ import pandas as pd
 import os, re, sys
 import argparse
 import hashlib
-from features_engine import extract_features_dict, FEATURE_COLUMNS
+from .features_engine import extract_features_dict, FEATURE_COLUMNS
 
 # ====================================================================
 # CONFIGURAZIONI GLOBALI DELL'EDR
