@@ -10,8 +10,14 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 # ==========================================
 file_input = "../datasets/dataset_features.xlsx" 
 n_estimators = 100  # Compromesso ottimale tra prestazioni e leggerezza EDR
-max_depth = 27
+max_depth = 25      # Profondità massima per evitare overfitting e garantire decisioni rapide
 k_folds = 5         # Standard accademico per la validazione incrociata
+min_samples_leaf = 2
+min_samples_split = 2
+max_samples = 0.9  # Usare il 90% dei dati per ogni albero per mantenere diversità
+max_features = 'sqrt'  # Limitiamo le feature per ogni split per aumentare  
+class_weight = {0: 1, 1: 10}  # Bilanciamento aggressivo per non perdere i malware
+criterion = 'entropy'  # Log Loss ed Entropy sono spesso più penalizzanti dell
 
 print("--- TRAINING EDR: VALIDAZIONE E ADDESTRAMENTO FINALE ---")
 
@@ -34,9 +40,13 @@ feature_names = X_numeric.columns.tolist()
 rf_model = RandomForestClassifier(
     n_estimators=n_estimators,
     max_depth=max_depth,
-    max_features=None, 
-    #min_samples_leaf=2,
-    #class_weight={0: 1, 1: 5}, # Penalizzazione severa per i Falsi Negativi (Malware sfuggiti)
+    bootstrap=True,
+    class_weight=class_weight,
+    criterion=criterion,
+    max_samples=max_samples,
+    min_samples_leaf=min_samples_leaf,
+    min_samples_split=min_samples_split,
+    max_features=max_features, 
     random_state=42
 )
 

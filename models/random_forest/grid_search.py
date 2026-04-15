@@ -2,87 +2,90 @@ import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
-from sklearn.feature_extraction.text import TfidfVectorizer
-from scipy.sparse import hstack
+from sklearn.metrics import fbeta_score, make_scorer
 import time
+import joblib
 
-print("--- AVVIO GRID SEARCH SNELLA ED EFFICACE (Ibrida Num + TF-IDF) ---")
+# Impedisce stampe superflue di avvisi se il dataset è piccolo
+import warnings
+warnings.filterwarnings('ignore')
 
-# 1. Caricamento Dataset (dal file Excel finale)
+print("--- AVVIO GRID SEARCH ORIENTATA AL RECALL (Ottimizzazione F2-Score) ---")
+
+# 1. Caricamento Dataset
 file_input = "../datasets/dataset_features.xlsx"
 try:
-    print("Lettura del dataset in corso...")
     df = pd.read_excel(file_input, engine='openpyxl')
-    df['command'] = df['command'].fillna('').astype(str)
     y = df['malicious'].astype(int)
-    print(f"[OK] Dataset caricato: {len(df)} campioni.")
+    X = df.drop(columns=['malicious', 'command']).fillna(0).astype(float)
+    print(f"[OK] Dataset caricato: {len(df)} campioni e {X.shape[1]} feature.")
 except Exception as e:
-    print(f"[!] Errore caricamento: {e}")
+    print(f"[!] Errore: {e}")
     exit()
 
-# 2. Creazione della Matrice Ibrida
-print("Preparazione feature numeriche...")
-X_numeric = df.drop(columns=['malicious', 'command']).fillna(0).astype(float)
+# 2. Configurazione Scorer F2
+f2_scorer = make_scorer(fbeta_score, beta=2)
 
-print("Generazione vocabolario TF-IDF (testuale)...")
-vectorizer = TfidfVectorizer(max_features=1000, ngram_range=(1, 3), analyzer='char_wb')
-X_tfidf = vectorizer.fit_transform(df['command'])
-
-print("Unione matrici (HStack)...")
-X_final = hstack([X_numeric.values, X_tfidf])
-
-# 3. Griglia di Ricerca OTTIMIZZATA (Ultra-veloce)
-# Tagliamo il "rumore" e concentriamoci sui parametri che fanno davvero la differenza
+# 3. Parametri (Griglia ottimizzata per Recall)
 param_grid = {
-    'max_depth': [22, 25, 27, 30],      # Salti più ampi, coprono bene l'area 20-30
-    'n_estimators': [100, 300],         # Oltre 300 alberi si spreca solo potenza di calcolo
-    'min_samples_split': [2, 3, 4, 5],        # Quanti campioni per dividere un nodo
-    'min_samples_leaf': [1, 2],         # Foglie più "pesanti" evitano l'overfitting
-    'max_features': ['sqrt'],           # Molto superiore a 'log2' sulle matrici testuali
-    'class_weight': ['balanced']        # Veloce ma implacabile sui malware rari
+    'n_estimators': [100],
+    'max_depth': [25,,27, 30, None], 
+    'criterion': ['entropy', 'log_loss'],
+    'min_samples_split': [2, 4],
+    'min_samples_leaf': [1, 2],
+    'max_features': ['sqrt', 'log2'],
+    'class_weight': [{0: 1, 1: 5}, {0: 1, 1: 10}, {0: 1, 1: 15}],
+    'bootstrap': [True],
+    'max_samples': [0.9, None] 
 }
 
-# 4. Configurazione
+# 4. Configurazione Grid Search
 rf = RandomForestClassifier(random_state=42, n_jobs=-1)
 skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+# Calcoliamo quante combinazioni totali verranno provate
+n_comb = np.prod([len(v) for v in param_grid.values()])
+print(f"[INFO] Saranno testate {n_comb} combinazioni su 5 fold (Totale: {n_comb * 5} fit).")
 
 grid_search = GridSearchCV(
     estimator=rf, 
     param_grid=param_grid, 
     cv=skf, 
-    scoring='f1', 
-    verbose=2, 
+    scoring=f2_scorer, 
+    verbose=3,  # <--- Aumentato a 3 per vedere il log numerico di ogni fit
     n_jobs=-1 
 )
 
-# 5. Esecuzione
-print(f"\nRicerca ottimale in corso su {X_final.shape[1]} feature totali...")
-print("-> Combinazioni ridotte per massima efficienza: Veloce e Letale!")
+# 5. Esecuzione con monitoraggio tempo
+print(f"\nTraining in corso... Monitora l'output qui sotto per l'avanzamento:")
+print("-" * 30)
 start_time = time.time()
-grid_search.fit(X_final, y)
+
+grid_search.fit(X, y)
+
 duration = (time.time() - start_time) / 60
 
 # 6. Risultati Finali
 print("\n" + "="*50)
-print(" RISULTATI OTTIMIZZAZIONE SNELLA")
-print("="*50)
-print(f"Miglior F1-Score: {grid_search.best_score_ * 100:.2f}%")
+print("OPERAZIONE COMPLETATA")
+print(f"Miglior F2-Score: {grid_search.best_score_ * 100:.2f}%")
+print(f"Tempo totale: {duration:.2f} min")
+print("-" * 50)
 print("Parametri Vincenti:")
 for param, value in grid_search.best_params_.items():
     print(f" -> {param}: {value}")
-print(f"\nTempo di elaborazione: {duration:.2f} minuti")
 print("="*50)
 
-# 7. Analisi del Modello Migliore (Feature Importances Mappate)
+# 7. Salvataggio
 best_model = grid_search.best_estimator_
+joblib.dump(best_model, 'best_rf_model_f2.pkl')
+print("\n[OK] Modello salvato come 'best_rf_model_f2.pkl'")
 
-# Recuperiamo i nomi delle colonne: Numeriche + Parole del TF-IDF
-feature_names = X_numeric.columns.tolist() + vectorizer.get_feature_names_out().tolist()
-
+# 8. Top Feature
 importances = pd.DataFrame({
-    'Feature': feature_names, 
+    'Feature': X.columns, 
     'Importanza (%)': best_model.feature_importances_ * 100
 }).sort_values('Importanza (%)', ascending=False)
 
-print("\n--- TOP 15 FEATURE (Cosa guarda il modello per scovare i malware) ---")
-print(importances.head(15).to_string(index=False))
+print("\n--- TOP 10 FEATURE COMPORTAMENTALI ---")
+print(importances.head(10).to_string(index=False))
