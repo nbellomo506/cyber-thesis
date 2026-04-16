@@ -28,15 +28,18 @@ f2_scorer = make_scorer(fbeta_score, beta=2)
 
 # 3. Parametri (Griglia ottimizzata per Recall)
 param_grid = {
-    'n_estimators': [100],
-    'max_depth': [25,,27, 30, None], 
-    'criterion': ['entropy', 'log_loss'],
-    'min_samples_split': [2, 4],
-    'min_samples_leaf': [1, 2],
-    'max_features': ['sqrt', 'log2'],
-    'class_weight': [{0: 1, 1: 5}, {0: 1, 1: 10}, {0: 1, 1: 15}],
+    'n_estimators': [45,46,47,48,49,50,51,52,53,54,55,60],
+    
+    # Fissiamo i vincitori della scorsa run per coerenza
     'bootstrap': [True],
-    'max_samples': [0.9, None] 
+    'class_weight': [{0: 1, 1: 7}],
+    'criterion': ['entropy'],
+    'max_depth': [30],
+    'max_features': ['sqrt'],
+    'max_samples': [None],
+    'min_impurity_decrease': [0.0],
+    'min_samples_leaf': [1],
+    'min_samples_split': [3]
 }
 
 # 4. Configurazione Grid Search

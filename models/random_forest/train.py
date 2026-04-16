@@ -9,14 +9,14 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 # 1. CONFIGURAZIONE ARCHITETTURALE
 # ==========================================
 file_input = "../datasets/dataset_features.xlsx" 
-n_estimators = 100  # Compromesso ottimale tra prestazioni e leggerezza EDR
-max_depth = 25      # Profondità massima per evitare overfitting e garantire decisioni rapide
-k_folds = 5         # Standard accademico per la validazione incrociata
-min_samples_leaf = 2
-min_samples_split = 2
-max_samples = 0.9  # Usare il 90% dei dati per ogni albero per mantenere diversità
+n_estimators = 54  # Compromesso ottimale tra prestazioni e leggerezza EDR
+max_depth = 30      # Profondità massima per evitare overfitting e garantire decisioni rapide
+k_folds = 100         # Standard accademico per la validazione incrociata
+min_samples_leaf = 1
+min_samples_split = 3
+max_samples = None  # Usare il 90% dei dati per ogni albero per mantenere diversità
 max_features = 'sqrt'  # Limitiamo le feature per ogni split per aumentare  
-class_weight = {0: 1, 1: 10}  # Bilanciamento aggressivo per non perdere i malware
+class_weight = {0: 1, 1: 7}  # Bilanciamento aggressivo per non perdere i malware
 criterion = 'entropy'  # Log Loss ed Entropy sono spesso più penalizzanti dell
 
 print("--- TRAINING EDR: VALIDAZIONE E ADDESTRAMENTO FINALE ---")
