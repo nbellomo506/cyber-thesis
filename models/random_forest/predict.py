@@ -3,7 +3,11 @@ import pandas as pd
 import os, re, sys
 import argparse
 import hashlib
-from .features_engine import extract_features_dict, FEATURE_COLUMNS
+
+try:
+    from features_engine import extract_features_dict, FEATURE_COLUMNS
+except ImportError as e:
+    from .features_engine import extract_features_dict, FEATURE_COLUMNS
 
 # ====================================================================
 # CONFIGURAZIONI GLOBALI DELL'EDR
@@ -12,7 +16,8 @@ EDR_THRESHOLD = 50.0  # Soglia per il blocco (50%)
 
 # WHITELIST CRITTOGRAFICA: Inserisci qui l'hash SHA-256 esatto degli script approvati.
 TRUSTED_HASHES = [
-    "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "esempio"
 ]
 
 # ====================================================================
