@@ -34,9 +34,16 @@ def decode_ps_base64(command):
     for b64_str in potential_b64:
         try:
             decoded_bytes = base64.b64decode(b64_str)
-            decoded_text = decoded_bytes.decode('utf-16le', errors='ignore')
-            if len(decoded_text.strip()) > 5:
-                decoded_content += " " + decoded_text
+            
+            # Un EDR robusto prova a decodificare in entrambi i formati standard
+            text_16 = decoded_bytes.decode('utf-16le', errors='ignore')
+            text_8 = decoded_bytes.decode('utf-8', errors='ignore')
+            
+            if len(text_16.strip()) > 5:
+                decoded_content += " " + text_16
+            if len(text_8.strip()) > 5:
+                decoded_content += " " + text_8
+                
         except: pass
     return decoded_content
 
@@ -88,8 +95,19 @@ def extract_features_dict(command):
     f['has_hidden_window'] = 1 if any(k in clean_cmd for k in ['windowstylehidden', 'whidden', 'windowhidden', 'showwindow0']) else 0
     
     # Aggiunti: xmlhttp, msxml2 (Mosaic Loader & affini)
-    f['has_web_request'] = 1 if any(k in clean_cmd for k in ['http', 'download', 'webclient', 'iwr', 'restmethod', 'bitsadmin', 'certutil', 'xmlhttp', 'msxml2']) else 0
+    # Termini di rete puramente malevoli (senza ambiguità)
+    web_keywords = ['http', 'webclient', 'iwr', 'restmethod', 'bitsadmin', 'certutil', 'xmlhttp', 'msxml2']
 
+    # Check per 'download': lo consideriamo sospetto SOLO SE non è parte di un percorso cartella comune
+    # o se è usato come metodo (.download)
+    has_suspicious_download = False
+    if 'download' in clean_cmd:
+        # Se NON è preceduto da "cd" o ".\", o se c'è un punto prima (metodo .net)
+        if not any(prefix in clean_cmd for prefix in ['cd ', '.\\', 'dir ']) or ('.download' in clean_cmd):
+            has_suspicious_download = True
+
+    # Risultato finale
+    f['has_web_request'] = 1 if (any(k in clean_cmd for k in web_keywords) or has_suspicious_download) else 0
     # Aggiunti: ::load, entrypoint (Esecuzione in memoria avanzata)
     f['has_reflection'] = 1 if any(k in clean_cmd for k in ['reflection', 'gettype', 'getfield', 'getmethod', 'nonpublic', '::load', 'entrypoint']) else 0
 
