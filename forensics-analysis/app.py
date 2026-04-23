@@ -18,7 +18,7 @@ class ForensicApp(ctk.CTk):
     description = """Carica i file da analizzare tramite l'interfaccia sottostante altrimenti acquisiscili automaticamente.
 Non è necessario caricare tutti gli artefatti per avviare l'analisi forense.
 L'analisi integrata combinerà i risultati di tutti i file caricati, evidenziando eventuali comandi sospetti o malevoli.
-Potrebbe essere necessario qualche minuto per completare l'analisi, a seconda della quantità di dati."""
+Potrebbe essere necessario qualche minuto per completare l'analisi, a seconda della quantità di file caricati e dalla potenza computazionale disponibile."""
     
     title_text = "PowerShell Commands Forensic Analyzer"
 
