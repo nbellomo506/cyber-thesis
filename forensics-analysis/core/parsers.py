@@ -28,12 +28,11 @@ def parse_powershell_log(file_path):
     return [{"source": "Console_History", "command": c.strip(), "timestamp": ts} for c in commands if c.strip()]
 
 def parse_evtx_logs(file_path):
-    """Versione corretta e sicura per l'estrazione dai log operativi EVTX con data EU."""
+    """Versione robusta e sicura per l'estrazione dai log operativi EVTX con data EU."""
     entries = []
     ns = '{http://schemas.microsoft.com/win/2004/08/events/event}'
     
     try:
-        # Usiamo il costrutto 'with' nativo per la gestione sicura della memoria
         with Evtx(file_path) as evtx_log:
             for xml, record in evtx_file_xml_view(evtx_log.get_file_header()):
                 try:
@@ -45,21 +44,30 @@ def parse_evtx_logs(file_path):
                     if event_id == '4104':
                         time_created = system.find(f'{ns}TimeCreated').attrib.get('SystemTime')
                         
-                        # Fix per la data in formato Europeo
+                        # --- FIX FORMATO DATA SUPER ROBUSTO ---
                         if time_created:
                             try:
+                                # 1. Rimuove Z e i millisecondi (es. .123456)
                                 clean_time = time_created.split('.')[0].replace('Z', '')
-                                dt = datetime.strptime(clean_time, "%Y-%m-%dT%H:%M:%S")
+                                # 2. Normalizza: se c'è una 'T', la trasforma in spazio
+                                clean_time = clean_time.replace('T', ' ')
+                                # 3. Ora il formato è garantito essere Anno-Mese-Giorno Ora:Minuti:Secondi
+                                dt = datetime.strptime(clean_time, "%Y-%m-%d %H:%M:%S")
+                                # 4. Converte in formato italiano
                                 ts_str = dt.strftime("%d-%m-%Y %H:%M:%S")
-                            except Exception:
-                                ts_str = "Timestamp Errato"
+                            except Exception as e:
+                                # Fallback: se fallisce, stampa il dato grezzo senza microsecondi
+                                ts_str = time_created.split('.')[0].replace('T', ' ')
+                                print(f"[?] Formato data atipico EVTX bypassato: {time_created}")
                         else:
                             ts_str = "N/D"
+                        # --------------------------------------
                         
                         event_data = root.find(f'{ns}EventData')
                         if event_data is not None:
                             for data in event_data.findall(f'{ns}Data'):
                                 if data.attrib.get('Name') == 'ScriptBlockText' and data.text:
+                                    # Rimuoviamo gli a capo per non spaccare la tabella
                                     clean_command = data.text.replace('\n', ' ').strip()
                                     entries.append({
                                         "source": "PS_Operational.evtx (EID 4104)", 
@@ -72,7 +80,7 @@ def parse_evtx_logs(file_path):
         print(f"[!] Errore critico nel parsing EVTX: {e}")
         
     return entries
-
+    
 def parse_ntuser_dat(file_path):
     entries = []
     reg = Registry.Registry(file_path)
