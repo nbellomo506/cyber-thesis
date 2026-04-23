@@ -49,9 +49,6 @@ Potrebbe essere necessario qualche minuto per completare l'analisi, a seconda de
         # --- TASTO ANALISI ---
         self.btn_run = ctk.CTkButton(self.main_container, text="AVVIA ANALISI INTEGRATA", fg_color="#c0392b", height=50, font=("Arial", 14, "bold"), command=self.run_analysis)
         self.btn_run.pack(pady=(20, 15))
-        
-        self.lbl_status = ctk.CTkLabel(self.main_container, text="Stato: Pronto per l'acquisizione", font=("Arial", 12))
-        self.lbl_status.pack()
 
     def build_acquisition_table(self):
         table_frame = ctk.CTkFrame(self.main_container)
@@ -109,9 +106,11 @@ Potrebbe essere necessario qualche minuto per completare l'analisi, a seconda de
         ctk.CTkLabel(table_frame, text="⚡ Acquisizione Massiva", font=("Arial", 13, "bold"), text_color="#d35400").grid(row=6, column=0, padx=10, pady=(0, 15), sticky="w")
         
         self.btn_fetch_all = ctk.CTkButton(table_frame, text="ESTRAI TUTTO", fg_color="#d35400", hover_color="#e67e22", font=("Arial", 12, "bold"), command=self.fetch_all_auto)
-        # Usa columnspan=2 per occupare lo spazio di "Manuale" e "Automatica" insieme
         self.btn_fetch_all.grid(row=6, column=2, columnspan=2, padx=10, pady=(0, 15), sticky="ew")
 
+        # --- RIGA 6: BARRA DI STATO (INTEGRATA IN TABELLA) ---
+        self.lbl_status = ctk.CTkLabel(table_frame, text="Stato: Pronto per l'acquisizione", font=("Arial", 12, "italic"), text_color="gray")
+        self.lbl_status.grid(row=7, column=0, columnspan=4, pady=(0, 15), sticky="")
         # Aggiungiamo tutti i bottoni alla lista per bloccarli durante i caricamenti
         self.ui_buttons.extend([btn_txt_man, btn_txt_auto, btn_evtx_man, btn_evtx_auto, btn_reg_man, btn_reg_auto, self.btn_fetch_all])
 
