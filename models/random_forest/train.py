@@ -9,7 +9,8 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 # 1. CONFIGURAZIONE ARCHITETTURALE
 # ==========================================
 file_input = "../datasets/dataset_features.xlsx" 
-n_estimators = 54  # Compromesso ottimale tra prestazioni e leggerezza EDR
+bootstrap = True
+n_estimators = 54  # Compromesso ottimale tra prestazioni e leggerezza EDR . massimizza recall = 54
 max_depth = 30      # Profondità massima per evitare overfitting e garantire decisioni rapide
 k_folds = 5         # Standard accademico per la validazione incrociata
 min_samples_leaf = 1
@@ -40,7 +41,7 @@ feature_names = X_numeric.columns.tolist()
 rf_model = RandomForestClassifier(
     n_estimators=n_estimators,
     max_depth=max_depth,
-    bootstrap=True,
+    bootstrap=bootstrap,
     class_weight=class_weight,
     criterion=criterion,
     max_samples=max_samples,

@@ -85,6 +85,43 @@ def parse_ntuser_dat(file_path):
     entries = []
     reg = Registry.Registry(file_path)
     
+    # 1. RICERCA DEI TRIGGER (Persistenza nota)
+    persistence_keys = [
+        r"Software\Microsoft\Windows\CurrentVersion\Run", 
+        r"Software\Microsoft\Windows\CurrentVersion\RunOnce",
+        r"Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run"
+    ]
+    
+    for path in persistence_keys:
+        try:
+            key = reg.open(path)
+            ts = format_timestamp(key.timestamp())
+            for value in key.values():
+                entries.append({"source": f"Persistence Trigger ({value.name()})", "command": str(value.value()), "timestamp": ts})
+        except Registry.RegistryKeyNotFoundException: 
+            pass
+            
+    # 2. RICERCA DELLO STORAGE (Payload nascosti fileless)
+    # I malware spesso creano sottochiavi in HKCU\Software con nomi casuali
+    try:
+        software_key = reg.open(r"Software")
+        for subkey in software_key.subkeys():
+            # Saltiamo le chiavi legittime enormi (es. Microsoft) per velocizzare l'analisi
+            if subkey.name() not in ["Microsoft", "Classes", "Policies"]:
+                for value in subkey.values():
+                    val_data = str(value.value())
+                    # Condizione Euristica: se il valore è più lungo di 500 caratteri 
+                    # o contiene parole chiave di PowerShell, è un potenziale Storage
+                    if len(val_data) > 500 or any(kw in val_data.lower() for kw in ['iex', 'bypass', '-enc', 'powershell']):
+                        ts = format_timestamp(subkey.timestamp())
+                        entries.append({"source": f"Suspicious Storage ({subkey.name()}\\{value.name()})", "command": val_data, "timestamp": ts})
+    except Registry.RegistryKeyNotFoundException: 
+        pass
+
+    return entries
+    entries = []
+    reg = Registry.Registry(file_path)
+    
     for path in [r"Software\Microsoft\Windows\CurrentVersion\Run", r"Software\Microsoft\Windows\CurrentVersion\RunOnce"]:
         try:
             key = reg.open(path)

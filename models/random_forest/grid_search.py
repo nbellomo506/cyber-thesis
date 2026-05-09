@@ -28,7 +28,7 @@ f2_scorer = make_scorer(fbeta_score, beta=2)
 
 # 3. Parametri (Griglia ottimizzata per Recall)
 param_grid = {
-    'n_estimators': [45,46,47,48,49,50,51,52,53,54,55,60],
+    'n_estimators': [50,51,52,53,54,55,56,57,58,59,60],
     
     # Fissiamo i vincitori della scorsa run per coerenza
     'bootstrap': [True],
