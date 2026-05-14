@@ -18,7 +18,8 @@ class ForensicApp(ctk.CTk):
     description = """Carica i file da analizzare tramite l'interfaccia sottostante altrimenti acquisiscili automaticamente.
 Non è necessario caricare tutti gli artefatti per avviare l'analisi forense.
 L'analisi integrata combinerà i risultati di tutti i file caricati, evidenziando eventuali comandi sospetti o malevoli.
-Potrebbe essere necessario qualche minuto per completare l'analisi, a seconda della quantità di file caricati e dalla potenza computazionale disponibile."""
+Potrebbe essere necessario qualche minuto per completare l'analisi,
+a seconda della quantità di file caricati e dalla potenza computazionale disponibile."""
     
     title_text = "PowerShell Commands Forensic Analyzer"
 
@@ -41,13 +42,12 @@ Potrebbe essere necessario qualche minuto per completare l'analisi, a seconda de
         self.main_container.pack(fill="both", expand=True, padx=20, pady=20)
 
         ctk.CTkLabel(self.main_container, text=self.title_text, font=("Arial", 22, "bold")).pack(pady=(0, 10))
-        ctk.CTkLabel(self.main_container, text=self.description, font=("Arial", 12, "italic")).pack(pady=(0, 20))
-
+        ctk.CTkLabel(self.main_container, text=self.description, font=("Arial", 16), wraplength=780).pack(pady=(0, 20))   
         # --- CREAZIONE DELLA TABELLA DI ACQUISIZIONE ---
         self.build_acquisition_table()
 
         # --- TASTO ANALISI ---
-        self.btn_run = ctk.CTkButton(self.main_container, text="AVVIA ANALISI INTEGRATA", fg_color="#c0392b", height=50, font=("Arial", 14, "bold"), command=self.run_analysis)
+        self.btn_run = ctk.CTkButton(self.main_container, text="AVVIA ANALISI INTEGRATA", fg_color="#c0392b", height=50, font=("Arial", 16, "bold"), command=self.run_analysis)
         self.btn_run.pack(pady=(20, 15))
 
     def build_acquisition_table(self):
@@ -62,14 +62,14 @@ Potrebbe essere necessario qualche minuto per completare l'analisi, a seconda de
         # --- INTESTAZIONI ---
         headers = ["Artefatto Forense", "Stato Attuale", "Azione Manuale", "Azione Automatica"]
         for col, text in enumerate(headers):
-            ctk.CTkLabel(table_frame, text=text, font=("Arial", 13, "bold"), text_color="#aaaaaa").grid(row=0, column=col, padx=10, pady=(15, 10), sticky="w" if col < 2 else "")
+            ctk.CTkLabel(table_frame, text=text, font=("Arial", 16, "bold"), text_color="#000000").grid(row=0, column=col, padx=10, pady=(15, 10), sticky="w" if col < 2 else "")
 
         separator = ctk.CTkFrame(table_frame, height=2, fg_color="#333333")
         separator.grid(row=1, column=0, columnspan=4, sticky="ew", padx=10, pady=(0, 10))
 
         # --- RIGA 1: TXT ---
-        ctk.CTkLabel(table_frame, text="1. Cronologia PowerShell (TXT)", font=("Arial", 13, "bold")).grid(row=2, column=0, padx=10, pady=10, sticky="w")
-        self.lbl_txt = ctk.CTkLabel(table_frame, text="Nessun file", text_color="gray")
+        ctk.CTkLabel(table_frame, text="1. Cronologia PowerShell (TXT)", font=("Arial", 16, "bold")).grid(row=2, column=0, padx=10, pady=10, sticky="w")
+        self.lbl_txt = ctk.CTkLabel(table_frame, text="Nessun file", text_color="gray" ,font=("Arial",16))
         self.lbl_txt.grid(row=2, column=1, padx=10, pady=10, sticky="w")
         
         btn_txt_man = ctk.CTkButton(table_frame, text="Sfoglia...", width=100, command=self.load_txt_man)
@@ -79,8 +79,8 @@ Potrebbe essere necessario qualche minuto per completare l'analisi, a seconda de
 
         # --- RIGA 2: EVTX ---
         evtx_title = "2. Eventi di Sistema (EVTX)\n(Richiede Auditing EID 4104)"
-        ctk.CTkLabel(table_frame, text=evtx_title, font=("Arial", 13, "bold"), justify="left").grid(row=3, column=0, padx=10, pady=10, sticky="w")
-        self.lbl_evtx = ctk.CTkLabel(table_frame, text="Nessun file", text_color="gray")
+        ctk.CTkLabel(table_frame, text=evtx_title, font=("Arial", 16, "bold"), justify="left").grid(row=3, column=0, padx=10, pady=10, sticky="w")
+        self.lbl_evtx = ctk.CTkLabel(table_frame, text="Nessun file",font=("Arial",16), text_color="gray")
         self.lbl_evtx.grid(row=3, column=1, padx=10, pady=10, sticky="w")
         
         btn_evtx_man = ctk.CTkButton(table_frame, text="Sfoglia...", width=100, command=self.load_evtx_man)
@@ -89,8 +89,8 @@ Potrebbe essere necessario qualche minuto per completare l'analisi, a seconda de
         btn_evtx_auto.grid(row=3, column=3, padx=10, pady=10)
 
         # --- RIGA 3: REGISTRO ---
-        ctk.CTkLabel(table_frame, text="3. Registro (NTUSER.DAT)", font=("Arial", 13, "bold")).grid(row=4, column=0, padx=10, pady=10, sticky="w")
-        self.lbl_reg = ctk.CTkLabel(table_frame, text="Nessun file", text_color="gray")
+        ctk.CTkLabel(table_frame, text="3. Registro (NTUSER.DAT)", font=("Arial", 16, "bold")).grid(row=4, column=0, padx=10, pady=10, sticky="w")
+        self.lbl_reg = ctk.CTkLabel(table_frame, text="Nessun file", text_color="gray",font=("Arial",16))
         self.lbl_reg.grid(row=4, column=1, padx=10, pady=10, sticky="w")
         
         btn_reg_man = ctk.CTkButton(table_frame, text="Sfoglia...", width=100, command=self.load_reg_man)
@@ -103,13 +103,13 @@ Potrebbe essere necessario qualche minuto per completare l'analisi, a seconda de
         separator2.grid(row=5, column=0, columnspan=4, sticky="ew", padx=10, pady=10)
 
         # --- RIGA 5: ACQUISIZIONE MASSIVA ---
-        ctk.CTkLabel(table_frame, text="⚡ Acquisizione Massiva", font=("Arial", 13, "bold"), text_color="#d35400").grid(row=6, column=0, padx=10, pady=(0, 15), sticky="w")
+        ctk.CTkLabel(table_frame, text="⚡ Acquisizione Massiva", font=("Arial", 16, "bold"), text_color="#d35400").grid(row=6, column=0, padx=10, pady=(0, 15), sticky="w")
         
         self.btn_fetch_all = ctk.CTkButton(table_frame, text="ESTRAI TUTTO", fg_color="#d35400", hover_color="#e67e22", font=("Arial", 12, "bold"), command=self.fetch_all_auto)
         self.btn_fetch_all.grid(row=6, column=2, columnspan=2, padx=10, pady=(0, 15), sticky="ew")
 
         # --- RIGA 6: BARRA DI STATO (INTEGRATA IN TABELLA) ---
-        self.lbl_status = ctk.CTkLabel(table_frame, text="Stato: Pronto per l'acquisizione", font=("Arial", 12, "italic"), text_color="gray")
+        self.lbl_status = ctk.CTkLabel(table_frame, text="Stato: Pronto per l'acquisizione", font=("Arial", 16), text_color="black")
         self.lbl_status.grid(row=7, column=0, columnspan=4, pady=(0, 15), sticky="")
         # Aggiungiamo tutti i bottoni alla lista per bloccarli durante i caricamenti
         self.ui_buttons.extend([btn_txt_man, btn_txt_auto, btn_evtx_man, btn_evtx_auto, btn_reg_man, btn_reg_auto, self.btn_fetch_all])
