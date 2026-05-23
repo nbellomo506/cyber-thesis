@@ -13,7 +13,7 @@ except ImportError as e:
 # CONFIGURAZIONI GLOBALI DELL'EDR
 # ====================================================================
 EDR_THRESHOLD = 50.0  # Soglia per il blocco (50%)
-
+critic_threshold = 80
 # WHITELIST CRITTOGRAFICA: Inserisci qui l'hash SHA-256 esatto degli script approvati.
 TRUSTED_HASHES = [
     "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -158,7 +158,7 @@ def analyze_single_command(command, origin="", model=None):
     # 6. Formulazione del Verdetto
     is_malicious = final_score >= EDR_THRESHOLD
     
-    if final_score >= 80:
+    if final_score >= critic_threshold:
         level = "CRITICO"
     elif final_score >= EDR_THRESHOLD:
         level = "SOSPETTO"
@@ -177,7 +177,7 @@ def analyze_single_command(command, origin="", model=None):
     }
 
 # ====================================================================
-# MODULO 5: ORCHESTRATORE CLI (Per uso da terminale)
+# MODULO 5:  CLI
 # ====================================================================
 def print_report(result_dict, is_whitelisted_hash=False, wl_reason="", is_verbose=False):
     """Funzione di stampa formattata esclusiva per l'uso da terminale (CLI)."""
