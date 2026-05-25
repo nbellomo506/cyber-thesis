@@ -10,11 +10,12 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 # ==========================================
 file_input = "../datasets/dataset_features.xlsx" 
 bootstrap = True
-n_estimators = 54  # Compromesso ottimale tra prestazioni e leggerezza EDR . massimizza recall = 54
+n_estimators = 55  # Compromesso ottimale tra prestazioni e leggerezza EDR . massimizza recall = 54
 max_depth = 30      # Profondità massima per evitare overfitting e garantire decisioni rapide
 k_folds = 5         # Standard accademico per la validazione incrociata
 min_samples_leaf = 1
-min_samples_split = 3
+min_samples_split = 5
+min_impurity_decrease = 0.0
 max_samples = None  # Usare il 90% dei dati per ogni albero per mantenere diversità
 max_features = 'sqrt'  # Limitiamo le feature per ogni split per aumentare  
 class_weight = {0: 1, 1: 7}  # Bilanciamento aggressivo per non perdere i malware
@@ -48,6 +49,7 @@ rf_model = RandomForestClassifier(
     min_samples_leaf=min_samples_leaf,
     min_samples_split=min_samples_split,
     max_features=max_features, 
+    min_impurity_decrease=min_impurity_decrease,
     random_state=42
 )
 

@@ -28,18 +28,31 @@ f2_scorer = make_scorer(fbeta_score, beta=2)
 
 # 3. Parametri (Griglia ottimizzata per Recall)
 param_grid = {
-    'n_estimators': [50,51,52,53,54,55,56,57,58,59,60],
+    # 1. RANGE PIÙ AMPIO: Invece di fare passi di 1 (50, 51...), esploriamo un orizzonte più vasto.
+    # Spesso la differenza tra 50 e 51 è impercettibile, ma tra 50 e 80 cambia la stabilità.
+    'n_estimators': [50,51,52,53,54,55,56,57,58,59, 60, 70, 80, 100],
     
-    # Fissiamo i vincitori della scorsa run per coerenza
+    # 2. IL VERO MOTORE DEL RECALL: Il class_weight.
+    # 1:7 era il tuo vincitore, ma dobbiamo mettere in competizione pesi diversi e la modalità dinamica di sklearn.
+    'class_weight': [{0: 1, 1: 5}, {0: 1, 1: 7}, {0: 1, 1: 10}, 'balanced_subsample'],
+    
+    # 3. CRITERIO DI TAGLIO
+    'criterion': ['entropy', 'gini'],
+    
+    # 4. PROFONDITÀ: Lasciamo il limite a 25-30, ma aggiungiamo "None" (crescita illimitata fino alla foglia pura)
+    'max_depth': [25, 27, 30, None],
+    
+    # 5. DIVERSITÀ DEGLI ALBERI: 'sqrt' è lo standard, ma 'log2' costringe gli alberi a usare feature ancora più diverse tra loro, riducendo l'overfitting.
+    'max_features': ['sqrt', 'log2'],
+    
+    # 6. CONTROLLO DELL'OVERFITTING SULLE FOGLIE: 
+    # Sblocchiamo questi due parametri. Costringere il modello a fermarsi prima (es. min_samples_split=5) lo fa generalizzare meglio sui malware mai visti.
+    'min_samples_split': [2, 3, 5],
+    'min_samples_leaf': [1, 2],
+    
+    # Fissi (Questi non vale la pena testarli ulteriormente, rubano solo tempo)
     'bootstrap': [True],
-    'class_weight': [{0: 1, 1: 7}],
-    'criterion': ['entropy'],
-    'max_depth': [30],
-    'max_features': ['sqrt'],
-    'max_samples': [None],
-    'min_impurity_decrease': [0.0],
-    'min_samples_leaf': [1],
-    'min_samples_split': [3]
+    'min_impurity_decrease': [0.0]
 }
 
 # 4. Configurazione Grid Search
